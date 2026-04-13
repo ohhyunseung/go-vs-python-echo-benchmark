@@ -1,0 +1,17 @@
+certs/*
+!certs/gen_certs.sh
+logs/
+*.log
+.env
+__pycache__/
+*.pyc
+.DS_Store
+node_modules/
+build/
+dist/
+secrets/
+go_svr
+go_client
+py_svr
+!cmd/*
+venv/
