@@ -35,7 +35,7 @@ async def handle_echo(reader, writer):
             pass
 
     if verbose:
-        print(f"[+] {addr} CN={cn} tls={tls_version}")
+        print(f"[+] {addr} CN={cn} tls={tls_version}", flush=True)
 
     try:
         while True:
@@ -72,7 +72,7 @@ async def stats_loop():
         mb_per_sec = (curr_bytes - prev_bytes) / 1024 / 1024
 
         print(f"[PY] active={active_conns} total={total_conns} "
-              f"msg/s={msg_per_sec} MB/s={mb_per_sec:.2f}")
+              f"msg/s={msg_per_sec} MB/s={mb_per_sec:.2f}", flush=True)
 
         prev_msg, prev_bytes = curr_msg, curr_bytes
 
@@ -100,7 +100,7 @@ async def main():
 
     server = await asyncio.start_server(handle_echo, host, int(port), ssl=context)
 
-    print(f"[PY] mTLS(TLS1.3) 서버 listen {host}:{port}")
+    print(f"[PY] mTLS(TLS1.3) 서버 listen {host}:{port}", flush=True)
 
     await asyncio.gather(server.serve_forever(), stats_loop())
 

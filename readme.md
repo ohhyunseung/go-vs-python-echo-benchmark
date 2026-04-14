@@ -1,24 +1,43 @@
 # 성능 비교: Python (uvloop) vs Go (Goroutine)
 
-### 측정 환경
+## 측정 환경&조건
 
-- 동시 연결: 1,000개
+- virtualbox
+- 동시 연결: 1,000개(run_all.sh 참조)
 - 프로토콜: mTLS TLS 1.3 Echo
 - 버퍼 크기: 8,192 bytes
 
-### 빌드
-#### 인증서 생성
+### server
+```
+OS : Debian
+메모리 : 6144 MB
+CPU Core : 3 개
+cmd/go_svr
+cmd/py_svr
+```
+
+### client
+```
+OS : ubuntu
+메모리 : 4096 MB
+CPU Core : 4 개
+cmd/go_client 동일 사용
+10개 client
+```
+
+## 빌드
+### 인증서 생성
 ```
 cd certs
 ./gen_certs.sh
 cd ..
 ```
-#### Go
+### Go
 ```
 go build -o go_svr ./cmd/go_svr
 go build -o go_client ./cmd/go_client
 ```
-#### python
+### python
 ```
 cd cmd/py_svr
 python3 -m venv venv
@@ -28,38 +47,17 @@ pyinstaller --onefile --name py_svr main.py
 cp dist/py_svr ../../.
 ```
 
-#### server
-```
-virtualbox : Debian
-메모리 : 6144 MB
-CPU Core : 3 개
-cmd/go_svr
-cmd/py_svr
-```
+## 성능측정
 
-#### client
-```
-virtualbox : ubuntu
-메모리 : 4096 MB
-CPU Core : 4 개
-cmd/go_client 동일 사용
-10개 client
-```
+> cmd/py_svr/analysis.py 사용
 
-## 수치 요약
+> py_svr.log와 go_svr.log 각각 50개 데이타
 
-| 지표           | Python (uvloop) | Go           | 비율 (Go/PY) | 비고                |
-|----------------|-----------------|--------------|--------------|---------------------|
-| 평균 msg/s     | 2,508           | 6,270        | 2.50x        |                     |
-| 최대 msg/s     | 2,987           | 7,472        | 2.50x        |                     |
-| 최소 msg/s     | 1,822           | 4,757        | 2.61x        |                     |
-| 평균 MB/s      | 0.61            | 1.53         | 2.51x        |                     |
-| 최대 MB/s      | 0.73            | 1.82         | 2.49x        |                     |
-| 최소 MB/s      | 0.44            | 1.16         | 2.64x        |                     |
-| msg/s 표준편차 | ~249            | ~503         | —            |                     |
-| 안정성 (CV)    | ~9.9%           | ~8.0%        | Go가 소폭 안정 |
+![Performance Charts](performance_charts.png)
 
-
+## 참고
+- 암호화 통신에 따른 처리 성능 분석이다.
+- print, log 파일 기록과 같은 io 발생이 성능에 영향을 주고 있다.
 
 
 
